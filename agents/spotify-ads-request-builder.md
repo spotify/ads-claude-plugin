@@ -86,11 +86,18 @@ Pass IDs from each step's response to the next step.
 
 **Value Conversions:**
 - Budget: "$50" → `50000000` micro_amount
+- Bid cap: "$15" → `"bid_strategy": "MAX_BID", "bid_micro_amount": 15000000`
 - Dates: "next Monday" → compute ISO 8601 UTC datetime
 - Age: "18-34" → `{"age_ranges": [{"min": 18, "max": 34}]}`
 - Countries: "US and UK" → `{"geo_targets": [{"country_code": "US"}, {"country_code": "GB"}]}`
 - "Pause" → `{"status": "PAUSED"}`
 - "Archive" → `{"status": "ARCHIVED"}`
+
+**Ad Set Bid Strategy:**
+- Always set `bid_strategy` to `MAX_BID` unless the user explicitly requests otherwise.
+- When using `MAX_BID`, `bid_micro_amount` is required — this is the bid cap (maximum CPM).
+- If the user does not specify a bid cap, ask for one before creating the ad set.
+- `COST_PER_RESULT` is only compatible with the CLICKS campaign objective.
 
 **Error Handling:**
 - If the API returns an error, read the error message and explain what went wrong in plain language

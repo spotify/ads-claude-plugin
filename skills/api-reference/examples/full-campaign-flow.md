@@ -54,9 +54,8 @@ curl -s -X POST \
       "genders": ["MALE", "FEMALE", "NON_BINARY"],
       "platforms": ["MOBILE", "DESKTOP"]
     },
-    "bid_strategy": {
-      "type": "LOWEST_COST"
-    },
+    "bid_strategy": "MAX_BID",
+    "bid_micro_amount": 15000000,
     "pacing": "PACING_EVEN",
     "delivery": "ON"
   }' \
@@ -120,5 +119,6 @@ curl -s -X POST \
 
 - Forgetting to convert dollar amounts to micro-amounts (multiply by 1,000,000)
 - Missing required fields on ad set creation (all 6 required fields must be present)
+- Omitting `bid_micro_amount` when using `bid_strategy: MAX_BID` — the bid cap is required
 - Using a `campaign_id` that doesn't belong to the same `ad_account_id`
 - Setting `end_time` before `start_time`

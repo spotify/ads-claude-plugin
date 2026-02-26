@@ -55,6 +55,10 @@
 - `CATALOG`
 - `TEXT`
 
+### BidStrategy
+- `MAX_BID` — The `bid_micro_amount` acts as a bid cap (maximum CPM). **This is the typical default.** Always set `bid_micro_amount` when using MAX_BID.
+- `COST_PER_RESULT` — Only compatible with the CLICKS campaign objective. The `bid_micro_amount` acts as a target Cost Per Click.
+
 ### BudgetType
 - `DAILY`
 - `LIFETIME`

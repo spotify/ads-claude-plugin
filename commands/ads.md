@@ -44,9 +44,10 @@ Prompt for required fields:
   - Countries (e.g., US, GB, DE)
   - Genders (optional)
   - Platforms (optional: DESKTOP, MOBILE, CONNECTED_DEVICE)
-- **bid_strategy** — bid configuration
+- **bid_strategy** — always set to `MAX_BID` unless user specifies otherwise
+- **bid_micro_amount** (required with MAX_BID) — ask for the bid cap in dollars, convert to micro-amount. This is the maximum CPM the user is willing to pay. Example: "$15 bid cap" = `15000000`
 
-Important: Convert dollar amounts to micro-amounts by multiplying by 1,000,000.
+Important: Convert dollar amounts to micro-amounts by multiplying by 1,000,000. This applies to both `budget.micro_amount` and `bid_micro_amount`.
 
 ```bash
 curl -s -X POST -H "Authorization: Bearer $TOKEN" \

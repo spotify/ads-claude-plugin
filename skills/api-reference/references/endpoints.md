@@ -83,8 +83,8 @@ Create a new ad set within a campaign.
   - `type` (string, required) — DAILY or LIFETIME
 - `asset_format` (string, required) — AUDIO, VIDEO, IMAGE, AUDIO_PODCAST, etc.
 - `targets` (object, required) — See Targeting section
-- `bid_strategy` (object, required) — Bid strategy configuration
-- `bid_micro_amount` (int64, optional) — Bid amount in micro-units
+- `bid_strategy` (string, required) — Typically `MAX_BID`. Options: MAX_BID (bid cap) or COST_PER_RESULT (target CPC, only with CLICKS objective)
+- `bid_micro_amount` (int64, required with MAX_BID) — Bid cap in micro-units. With MAX_BID, this is the maximum CPM. Example: $15 bid cap = `15000000`
 - `promotion` (object, optional) — Promotion configuration
 - `frequency_caps` (object, optional) — Frequency cap settings
 - `pacing` (string, optional) — PACING_EVEN or PACING_ACCELERATED

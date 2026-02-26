@@ -93,7 +93,8 @@ Minimum 1 property required.
     "micro_amount": 50000000,
     "type": "DAILY | LIFETIME"
   },
-  "bid_strategy": { "...": "BidStrategyResponse" },
+  "bid_strategy": "MAX_BID | COST_PER_RESULT",
+  "bid_micro_amount": 15000000,
   "targets": { "...": "Targets object" },
   "promotion": { "...": "Promotion object" },
   "pacing": "PACING_EVEN | PACING_ACCELERATED",
@@ -130,7 +131,7 @@ Required: `name`, `campaign_id`, `start_time`, `budget`, `asset_format`, `target
     "platforms": ["DESKTOP", "MOBILE"],
     "genders": ["MALE", "FEMALE", "NON_BINARY"]
   },
-  "bid_strategy": { "type": "string" },
+  "bid_strategy": "MAX_BID",
   "bid_micro_amount": 15000000,
   "pacing": "PACING_EVEN",
   "delivery": "ON",
