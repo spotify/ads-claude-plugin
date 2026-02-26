@@ -89,15 +89,28 @@ Pass IDs from each step's response to the next step.
 - Bid cap: "$15" → `"bid_strategy": "MAX_BID", "bid_micro_amount": 15000000`
 - Dates: "next Monday" → compute ISO 8601 UTC datetime
 - Age: "18-34" → `{"age_ranges": [{"min": 18, "max": 34}]}`
-- Countries: "US and UK" → `{"geo_targets": [{"country_code": "US"}, {"country_code": "GB"}]}`
+- Countries: "US" → `{"geo_targets": {"country_code": "US"}}` — **flat object, NOT an array**
+- Platforms: → `["ANDROID", "DESKTOP", "IOS"]` — **NOT "MOBILE" or "CONNECTED_DEVICE"**
 - "Pause" → `{"status": "PAUSED"}`
 - "Archive" → `{"status": "ARCHIVED"}`
 
+**Ad Set Required Fields (commonly missed):**
+- `category` is **required** — must be a valid `ADV_X_Y` code. Fetch from `GET /ad_categories` if needed.
+- `end_time` is **required** when `budget.type` is `LIFETIME`.
+- `targets.placements` is required — typically `["MUSIC"]` or `["PODCAST"]`.
+
 **Ad Set Bid Strategy:**
+- `bid_strategy` is a **plain string enum** (`MAX_BID`, `COST_PER_RESULT`, `UNSET`), NOT an object.
 - Always set `bid_strategy` to `MAX_BID` unless the user explicitly requests otherwise.
 - When using `MAX_BID`, `bid_micro_amount` is required — this is the bid cap (maximum CPM).
 - If the user does not specify a bid cap, ask for one before creating the ad set.
 - `COST_PER_RESULT` is only compatible with the CLICKS campaign objective.
+- Use `UNSET` to let the system handle bidding automatically.
+
+**Ad Creation Notes:**
+- `call_to_action` uses field name `key` (NOT `type`) and `clickthrough_url` (NOT `url`).
+- `assets` requires `asset_id` and `logo_asset_id` (always), plus `companion_asset_id` (required for AUDIO ads).
+- `tagline` max 40 chars, `advertiser_name` max 25 chars.
 
 **Error Handling:**
 - If the API returns an error, read the error message and explain what went wrong in plain language

@@ -110,52 +110,64 @@ Minimum 1 property required.
 ```
 
 ### AdSetCreateRequest
-Required: `name`, `campaign_id`, `start_time`, `budget`, `asset_format`, `targets`, `bid_strategy`
+Required: `name`, `campaign_id`, `start_time`, `budget`, `asset_format`, `targets`, `bid_strategy`, `category`
 ```json
 {
   "name": "string (2-200 chars)",
   "campaign_id": "uuid",
   "start_time": "ISO 8601",
-  "end_time": "ISO 8601 (optional)",
+  "end_time": "ISO 8601 (required if budget type is LIFETIME)",
   "budget": {
     "micro_amount": 50000000,
     "type": "DAILY"
   },
-  "asset_format": "AUDIO | VIDEO | IMAGE | AUDIO_PODCAST",
+  "asset_format": "AUDIO | VIDEO | IMAGE",
+  "category": "string (required, e.g. ADV_1_2 — fetch valid values from GET /ad_categories)",
   "targets": {
     "age_ranges": [{"min": 18, "max": 34}],
-    "geo_targets": [{"country_code": "US"}],
+    "geo_targets": {"country_code": "US"},
     "artist_ids": ["string"],
     "genre_ids": ["string"],
     "interest_ids": ["string"],
-    "platforms": ["DESKTOP", "MOBILE"],
+    "platforms": ["ANDROID", "DESKTOP", "IOS"],
+    "placements": ["MUSIC"],
     "genders": ["MALE", "FEMALE", "NON_BINARY"]
   },
   "bid_strategy": "MAX_BID",
   "bid_micro_amount": 15000000,
   "pacing": "PACING_EVEN",
   "delivery": "ON",
-  "frequency_caps": { "...": "optional" },
+  "frequency_caps": [{"frequency_unit": "DAY", "frequency_period": 1, "max_impressions": 5}],
   "mobile_app_id": "uuid (optional)"
 }
 ```
+
+**Important schema notes:**
+- `bid_strategy` is a **plain string enum** (`MAX_BID`, `COST_PER_RESULT`, `UNSET`), NOT an object.
+- `geo_targets` is a **flat object** with a `country_code` string property, NOT an array of objects.
+- `platforms` valid values are `ANDROID`, `DESKTOP`, `IOS` — NOT "MOBILE" or "CONNECTED_DEVICE".
+- `category` is **required** — use a valid `ADV_X_Y` code from the `GET /ad_categories` endpoint.
+- `end_time` is **required** when `budget.type` is `LIFETIME`.
+- `placements` inside `targets` is required — typically `["MUSIC"]` or `["PODCAST"]`.
 
 ### Targets Object
 ```json
 {
   "age_ranges": [{ "min": 18, "max": 65 }],
-  "geo_targets": [{ "country_code": "US", "region": "CA" }],
+  "geo_targets": { "country_code": "US", "city_ids": [], "dma_ids": [], "postal_code_ids": [], "region_ids": [] },
   "artist_ids": ["spotify-artist-id"],
   "genre_ids": ["genre-id"],
   "interest_ids": ["interest-id"],
   "playlist_ids": ["playlist-id"],
-  "platforms": ["DESKTOP", "MOBILE", "CONNECTED_DEVICE"],
+  "platforms": ["ANDROID", "DESKTOP", "IOS"],
+  "placements": ["MUSIC"],
   "genders": ["MALE", "FEMALE", "NON_BINARY"],
-  "languages": ["en", "es"],
-  "moment_targets": ["string"],
-  "episode_topic_ids": ["string"]
+  "language": "en",
+  "podcast_episode_topic_ids": ["string"]
 }
 ```
+
+**Important:** `geo_targets` is a single flat object, not an array. The `country_code` field is a string. `language` is a singular string (not an array called `languages`). `platforms` uses `ANDROID`/`IOS` (not `MOBILE`/`CONNECTED_DEVICE`).
 
 ---
 
@@ -188,28 +200,35 @@ Required: `name`, `campaign_id`, `start_time`, `budget`, `asset_format`, `target
 ```
 
 ### CreateAdRequest
-Required: `name`, `assets`
-Also needed: `tagline`, `advertiser_name`, `ad_set_id`, `call_to_action`
+Required: `name`, `ad_set_id`, `tagline`, `advertiser_name`, `assets`, `call_to_action`
 ```json
 {
   "name": "string (2-200 chars)",
   "ad_set_id": "uuid",
-  "tagline": "string",
-  "advertiser_name": "string",
-  "assets": { "...": "AdRequestAssets" },
+  "tagline": "string (2-40 chars)",
+  "advertiser_name": "string (2-25 chars)",
+  "assets": {
+    "asset_id": "uuid (required — audio, video, or image creative)",
+    "logo_asset_id": "uuid (required — logo image)",
+    "companion_asset_id": "uuid (required for AUDIO ads — companion image)",
+    "canvas_asset_id": "uuid (optional — 9:16 image or video)"
+  },
   "call_to_action": {
-    "type": "LEARN_MORE | SIGN_UP | SHOP_NOW | LISTEN_NOW | WATCH_NOW | ...",
-    "url": "https://example.com/landing"
+    "key": "SHOP_NOW",
+    "clickthrough_url": "https://example.com/landing"
   },
   "delivery": "ON",
-  "placements": ["MUSIC", "PODCAST"],
-  "asset_format": "AUDIO",
-  "asset_uri": "string (optional)",
   "third_party_tracking": [
     { "type": "IMPRESSION", "url": "https://tracker.example.com/imp" }
   ]
 }
 ```
+
+**Important schema notes:**
+- `call_to_action` uses field name `key` (NOT `type`) and `clickthrough_url` (NOT `url`).
+- `assets.asset_id` and `assets.logo_asset_id` are always required.
+- `assets.companion_asset_id` is required for AUDIO format ads.
+- Valid `call_to_action.key` values: `SHOP_NOW`, `LEARN_MORE`, `LISTEN_NOW`, `SIGN_UP`, `WATCH_NOW`, `BUY_NOW`, `BOOK_NOW`, `DOWNLOAD`, `GET_INFO`, `ORDER_NOW`, `PRE_SAVE`, `VISIT_SITE`, etc.
 
 ### UpdateAdRequest
 Minimum 1 property required.

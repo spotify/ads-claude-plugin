@@ -56,8 +56,10 @@
 - `TEXT`
 
 ### BidStrategy
+**Important:** This is a plain **string enum**, NOT an object. Use as `"bid_strategy": "MAX_BID"`.
 - `MAX_BID` — The `bid_micro_amount` acts as a bid cap (maximum CPM). **This is the typical default.** Always set `bid_micro_amount` when using MAX_BID.
 - `COST_PER_RESULT` — Only compatible with the CLICKS campaign objective. The `bid_micro_amount` acts as a target Cost Per Click.
+- `UNSET` — Let the system handle bidding automatically. Use when bid cap is not needed (e.g., LIFETIME budgets).
 
 ### BudgetType
 - `DAILY`
@@ -218,9 +220,36 @@
 ## Targeting Enums
 
 ### Platform
+- `ANDROID`
 - `DESKTOP`
-- `MOBILE`
-- `CONNECTED_DEVICE`
+- `IOS`
+
+**Important:** Do NOT use `MOBILE` or `CONNECTED_DEVICE` — those are not valid API values.
+
+### AdCallToActionKey
+- `APPLY_NOW`
+- `BOOK_NOW`
+- `BUY_NOW`
+- `BUY_TICKETS`
+- `CLICK_NOW`
+- `DOWNLOAD`
+- `FIND_STORES`
+- `GET_COUPON`
+- `GET_INFO`
+- `LEARN_MORE`
+- `LISTEN_NOW`
+- `MORE_INFO`
+- `ORDER_NOW`
+- `PRE_SAVE`
+- `SAVE_NOW`
+- `SHARE`
+- `SHOP_NOW`
+- `SIGN_UP`
+- `VISIT_PROFILE`
+- `VISIT_SITE`
+- `WATCH_NOW`
+
+**Important:** The field name in requests is `key`, NOT `type` or `text`.
 
 ### Gender
 - `MALE`

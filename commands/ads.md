@@ -36,15 +36,17 @@ Prompt for required fields:
 - **name** (2-200 chars)
 - **campaign_id** (uuid — suggest listing campaigns first)
 - **start_time** (ISO 8601 datetime)
-- **end_time** (ISO 8601, optional)
+- **end_time** (ISO 8601 — **required if budget type is LIFETIME**)
 - **budget** — ask for dollar amount and type (DAILY/LIFETIME), convert to micro_amount
-- **asset_format** (AUDIO, VIDEO, IMAGE, AUDIO_PODCAST)
+- **asset_format** (AUDIO, VIDEO, IMAGE)
+- **category** (required — valid `ADV_X_Y` code, fetch from `GET /ad_categories` if needed)
 - **targets** — ask for targeting preferences:
-  - Age range (e.g., 18-34)
-  - Countries (e.g., US, GB, DE)
-  - Genders (optional)
-  - Platforms (optional: DESKTOP, MOBILE, CONNECTED_DEVICE)
-- **bid_strategy** — always set to `MAX_BID` unless user specifies otherwise
+  - Age range (e.g., 18-34) → `"age_ranges": [{"min": 18, "max": 34}]`
+  - Country (e.g., US) → `"geo_targets": {"country_code": "US"}` (**flat object, NOT array**)
+  - Genders (optional) → `"genders": ["MALE", "FEMALE", "NON_BINARY"]`
+  - Platforms (optional) → `"platforms": ["ANDROID", "DESKTOP", "IOS"]` (**NOT "MOBILE" or "CONNECTED_DEVICE"**)
+  - Placements (required) → `"placements": ["MUSIC"]`
+- **bid_strategy** — plain string: `MAX_BID`, `COST_PER_RESULT`, or `UNSET`. Default to `MAX_BID`.
 - **bid_micro_amount** (required with MAX_BID) — ask for the bid cap in dollars, convert to micro-amount. This is the maximum CPM the user is willing to pay. Example: "$15 bid cap" = `15000000`
 
 Important: Convert dollar amounts to micro-amounts by multiplying by 1,000,000. This applies to both `budget.micro_amount` and `bid_micro_amount`.
@@ -78,12 +80,16 @@ Format as table: ID | Name | Ad Set ID | Status | Delivery
 Prompt for required fields:
 - **name** (2-200 chars)
 - **ad_set_id** (uuid — suggest listing ad sets first)
-- **tagline** (ad headline)
-- **advertiser_name**
-- **assets** (asset references)
-- **call_to_action** — type (LEARN_MORE, SIGN_UP, SHOP_NOW, LISTEN_NOW, WATCH_NOW) and URL
+- **tagline** (2-40 chars, ad headline)
+- **advertiser_name** (2-25 chars)
+- **assets** — fetch available assets from `GET /assets` and prompt user to select:
+  - `asset_id` (required — audio/video/image creative matching ad set format)
+  - `logo_asset_id` (required — logo image)
+  - `companion_asset_id` (required for AUDIO format — companion image)
+- **call_to_action** — uses field `key` (NOT `type`) and `clickthrough_url` (NOT `url`):
+  - `key`: SHOP_NOW, LEARN_MORE, LISTEN_NOW, SIGN_UP, WATCH_NOW, BUY_NOW, DOWNLOAD, etc.
+  - `clickthrough_url`: landing page URL
 - **delivery** (ON/OFF, default ON)
-- **placements** (optional: MUSIC, PODCAST, VIDEO)
 
 ```bash
 curl -s -X POST -H "Authorization: Bearer $TOKEN" \

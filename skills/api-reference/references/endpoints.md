@@ -77,20 +77,20 @@ Create a new ad set within a campaign.
 - `name` (string, 2-200 chars, required)
 - `campaign_id` (uuid, required)
 - `start_time` (ISO 8601 datetime, required)
-- `end_time` (ISO 8601 datetime, optional)
+- `end_time` (ISO 8601 datetime, **required if budget type is LIFETIME**)
 - `budget` (object, required):
   - `micro_amount` (int64, required) — Budget in micro-units ($1 = 1000000)
   - `type` (string, required) — DAILY or LIFETIME
-- `asset_format` (string, required) — AUDIO, VIDEO, IMAGE, AUDIO_PODCAST, etc.
-- `targets` (object, required) — See Targeting section
-- `bid_strategy` (string, required) — Typically `MAX_BID`. Options: MAX_BID (bid cap) or COST_PER_RESULT (target CPC, only with CLICKS objective)
+- `asset_format` (string, required) — AUDIO, VIDEO, or IMAGE
+- `category` (string, **required**) — Ad category code (e.g. `ADV_1_2`). Fetch valid values from `GET /ad_categories`
+- `targets` (object, required) — See Targeting section. **Note:** `geo_targets` is a flat object `{"country_code":"US"}`, NOT an array. `platforms` valid values are `ANDROID`, `DESKTOP`, `IOS`.
+- `bid_strategy` (string, required) — Plain string enum: `MAX_BID`, `COST_PER_RESULT`, or `UNSET`. **Not an object.**
 - `bid_micro_amount` (int64, required with MAX_BID) — Bid cap in micro-units. With MAX_BID, this is the maximum CPM. Example: $15 bid cap = `15000000`
 - `promotion` (object, optional) — Promotion configuration
-- `frequency_caps` (object, optional) — Frequency cap settings
+- `frequency_caps` (array, optional) — Array of `{frequency_unit, frequency_period, max_impressions}` objects
 - `pacing` (string, optional) — PACING_EVEN or PACING_ACCELERATED
 - `delivery` (string, optional) — ON or OFF
 - `mobile_app_id` (uuid, optional) — For app install campaigns
-- `is_survey` (boolean, optional, default false)
 
 **Response:** 201 — `AdSetResponse`
 
@@ -146,14 +146,18 @@ Create a new ad within an ad set.
 **Request Body:** `CreateAdRequest`
 - `name` (string, 2-200 chars, required)
 - `ad_set_id` (uuid, required)
-- `tagline` (string, required) — Ad tagline/headline
-- `advertiser_name` (string, required)
-- `assets` (object, required) — Asset references
-- `call_to_action` (object, required) — CTA configuration
+- `tagline` (string, 2-40 chars, required) — Ad tagline/headline
+- `advertiser_name` (string, 2-25 chars, required)
+- `assets` (object, required) — Asset references:
+  - `asset_id` (uuid, required) — Audio, video, or image creative asset
+  - `logo_asset_id` (uuid, required) — Logo image asset
+  - `companion_asset_id` (uuid, required for AUDIO) — Companion image asset
+  - `canvas_asset_id` (uuid, optional) — 9:16 image or video asset
+- `call_to_action` (object, required) — CTA configuration. **Uses field `key` (not `type`) and `clickthrough_url` (not `url`)**:
+  - `key` (string, required) — e.g. `SHOP_NOW`, `LEARN_MORE`, `LISTEN_NOW`
+  - `clickthrough_url` (string, required) — Landing page URL
+  - `language` (string, optional, default `ENGLISH`)
 - `delivery` (string, optional) — ON or OFF
-- `placements` (array, optional) — MUSIC, PODCAST, VIDEO
-- `asset_format` (string, optional) — AUDIO, VIDEO, IMAGE, etc.
-- `asset_uri` (string URI, optional) — Direct asset URI
 - `third_party_tracking` (array, optional, max 11) — Third-party tracking URLs
 
 **Response:** 201 — `AdResponse`
