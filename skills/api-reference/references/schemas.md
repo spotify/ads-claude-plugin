@@ -298,14 +298,17 @@ Required: `asset_type`, `name`
 ## Report Schemas
 
 ### AggregateReportResponse
+
+**Query parameter notes:** The metrics parameter is called `fields` (NOT `report_fields`). Array values must use repeated parameter format (`fields=IMPRESSIONS&fields=SPEND`), NOT comma-separated. Valid field values: `IMPRESSIONS`, `SPEND`, `CLICKS`, `REACH`, `FREQUENCY`, `LISTENERS`, `NEW_LISTENERS`, `STREAMS`, `COMPLETES`, `COMPLETION_RATE`, `STARTS`, `FIRST_QUARTILES`, `MIDPOINTS`, `THIRD_QUARTILES`, `VIDEO_VIEWS`, `CTR`, `OFF_SPOTIFY_IMPRESSIONS`.
+
 ```json
 {
-  "continuation_token": "string (base64)",
+  "continuation_token": "string (base64) | null",
   "report_start": "ISO 8601",
   "report_end": "ISO 8601",
   "granularity": "HOUR | DAY | LIFETIME",
   "rows": [{
-    "entity_type": "CAMPAIGN | AD_SET | AD",
+    "entity_type": "CAMPAIGN | AD_SET | AD | AD_ACCOUNT",
     "entity_id": "uuid",
     "entity_name": "string",
     "entity_status": "string",
@@ -313,12 +316,17 @@ Required: `asset_type`, `name`
     "end_time": "ISO 8601",
     "stats": [{
       "field_type": "IMPRESSIONS | SPEND | CLICKS | REACH | ...",
-      "field_value": "string (numeric)"
+      "field_value": "float (e.g., 15234.0, 0.0)"
     }]
   }],
   "warnings": ["string"]
 }
 ```
+
+**Notes:**
+- `field_value` is a **float**, not a string. Zero values appear as `0.0`.
+- `SPEND` values are in micro-amounts — divide by 1,000,000 for dollars.
+- Do NOT use async report metric names (`AD_COMPLETES`, `CPM`, `IMPRESSIONS_ON_SPOTIFY`) — use `COMPLETES`, `IMPRESSIONS` instead.
 
 ### CreateAsyncReportRequest
 Required: `name`, `granularity`, `dimensions`, `metrics`

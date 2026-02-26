@@ -21,39 +21,47 @@ Pull reporting data from the Spotify Ads API. Read settings from `.claude/spotif
 Get aggregated campaign metrics.
 
 Prompt for:
-- **entity_type** — What to report on (campaign, ad_set, ad)
-- **report_fields** — Metrics to include (suggest: IMPRESSIONS, SPEND, CLICKS, REACH, CTR, CPM)
-- **report_start** (ISO 8601)
-- **report_end** (ISO 8601)
-- **granularity** (HOUR, DAY, LIFETIME — default DAY)
-- **entity_ids** (optional — specific campaign/ad set/ad IDs)
+- **entity_type** — What to report on: `CAMPAIGN`, `AD_SET`, `AD`, or `AD_ACCOUNT`
+- **fields** — Metrics to include. **Parameter name is `fields`, NOT `report_fields`.**
+  Suggested: `IMPRESSIONS`, `SPEND`, `CLICKS`, `REACH`, `FREQUENCY`, `COMPLETES`
+  Full list: IMPRESSIONS, SPEND, CLICKS, REACH, FREQUENCY, LISTENERS, NEW_LISTENERS,
+  STREAMS, COMPLETES, COMPLETION_RATE, STARTS, FIRST_QUARTILES, MIDPOINTS, THIRD_QUARTILES,
+  VIDEO_VIEWS, CTR, OFF_SPOTIFY_IMPRESSIONS
+- **granularity** (HOUR, DAY, LIFETIME — default LIFETIME)
+- **report_start** / **report_end** (ISO 8601, optional for LIFETIME)
+- **entity_ids** + **entity_ids_type** (optional — filter to specific IDs)
+- **include_parent_entity** (optional, boolean — include parent info for AD_SET/AD)
+
+**Important:** Array query parameters must use **repeated parameter names**, NOT comma-separated.
 
 ```bash
 curl -s -H "Authorization: Bearer $TOKEN" \
   "$BASE_URL/ad_accounts/$AD_ACCOUNT_ID/aggregate_reports?\
 entity_type=CAMPAIGN&\
-report_fields=IMPRESSIONS,SPEND,CLICKS,REACH&\
-report_start=2025-01-01T00:00:00Z&\
-report_end=2025-01-31T23:59:59Z&\
-granularity=DAY&\
+fields=IMPRESSIONS&fields=SPEND&fields=CLICKS&fields=REACH&fields=FREQUENCY&\
+granularity=LIFETIME&\
 limit=50"
 ```
 
-Format the response as a readable table with stats broken out per entity and time period.
+**Granularity constraints:**
+- `LIFETIME` / `DAY`: date range must be within 90 days
+- `HOUR`: date range must be within the last 2 weeks
+
+Format the response as a readable table with stats broken out per entity. Filter out rows with zero impressions for cleaner output.
 
 ### `insights`
 Get audience insight breakdowns.
 
 Prompt for:
 - **insight_dimension** (GENDER, PLATFORM, LOCATION, ARTIST, GENRE)
-- **report_fields** — Metrics to include
+- **fields** — Metrics to include (same `fields` param as aggregate, repeated format)
 - **entity_ids** — Campaign or ad set IDs to analyze
 
 ```bash
 curl -s -H "Authorization: Bearer $TOKEN" \
   "$BASE_URL/ad_accounts/$AD_ACCOUNT_ID/insight_reports?\
 insight_dimension=GENDER&\
-report_fields=IMPRESSIONS,SPEND,CLICKS&\
+fields=IMPRESSIONS&fields=SPEND&fields=CLICKS&\
 entity_ids=$ENTITY_IDS"
 ```
 

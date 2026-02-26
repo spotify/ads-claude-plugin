@@ -140,10 +140,38 @@
 
 ## Report Enums
 
+### ReportFieldType (Aggregate & Insight Reports)
+Used with the `fields` query parameter on aggregate and insight report endpoints.
+**Important:** These are different from AsyncReportMetric values. Do NOT use async metric names (like `AD_COMPLETES`, `CPM`) in aggregate reports.
+
+- `IMPRESSIONS`
+- `SPEND` — in micro-amounts (divide by 1,000,000 for dollars)
+- `CLICKS`
+- `REACH`
+- `FREQUENCY`
+- `LISTENERS`
+- `NEW_LISTENERS`
+- `STREAMS`
+- `COMPLETES` — (NOT `AD_COMPLETES`)
+- `COMPLETION_RATE`
+- `STARTS`
+- `FIRST_QUARTILES`
+- `MIDPOINTS`
+- `THIRD_QUARTILES`
+- `VIDEO_VIEWS`
+- `CTR`
+- `OFF_SPOTIFY_IMPRESSIONS`
+
+### ReportEntityType
+- `CAMPAIGN`
+- `AD_SET`
+- `AD`
+- `AD_ACCOUNT`
+
 ### TimeDimensionType (Granularity)
-- `HOUR`
-- `DAY`
-- `LIFETIME`
+- `HOUR` — date range must be within the last 2 weeks
+- `DAY` — date range must be within 90 days
+- `LIFETIME` — date range must be within 90 days
 
 ### AsyncReportGranularity
 - `DAY`
@@ -162,6 +190,8 @@
 - `AD_NAME`
 
 ### AsyncReportMetric
+**Important:** These are for async CSV reports only. For aggregate reports, use `ReportFieldType` values instead.
+
 - `IMPRESSIONS_ON_SPOTIFY`
 - `IMPRESSIONS_OFF_SPOTIFY`
 - `SPEND`
@@ -171,15 +201,18 @@
 - `LISTENERS`
 - `NEW_LISTENERS`
 - `STREAMS`
-- `AD_COMPLETES`
+- `AD_COMPLETES` — (in aggregate reports, use `COMPLETES` instead)
 - `CTR`
 - `CPM`
 - `COMPLETION_RATE`
 
 ### AsyncReportEntityStatus
 - `ACTIVE`
+- `PAUSED`
 - `COMPLETED`
 - `PENDING_APPROVAL`
+- `REJECTED`
+- `ARCHIVED`
 
 ### InsightDimensionType
 - `GENDER`

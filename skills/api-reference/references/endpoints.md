@@ -290,40 +290,50 @@ Delete an audience.
 Get aggregated campaign metrics.
 
 **Query Parameters:**
-- `entity_type` (string) — Entity to report on
-- `report_fields` (array) — Metrics to include
-- `report_start` (ISO 8601 datetime)
-- `report_end` (ISO 8601 datetime)
-- `granularity` (string) — HOUR, DAY, or LIFETIME
-- `entity_ids` (array of uuid) — Filter to specific entities
-- `entity_statuses` (array) — Filter by status
+- `entity_type` (string, required) — Entity to report on: `CAMPAIGN`, `AD_SET`, `AD`, or `AD_ACCOUNT`
+- `fields` (array, required) — Metrics to include. **Parameter name is `fields`, NOT `report_fields`.** Must use **repeated parameter format** (`fields=IMPRESSIONS&fields=SPEND`), NOT comma-separated.
+  Valid values: `IMPRESSIONS`, `SPEND`, `CLICKS`, `REACH`, `FREQUENCY`, `LISTENERS`, `NEW_LISTENERS`, `STREAMS`, `COMPLETES`, `COMPLETION_RATE`, `STARTS`, `FIRST_QUARTILES`, `MIDPOINTS`, `THIRD_QUARTILES`, `VIDEO_VIEWS`, `CTR`, `OFF_SPOTIFY_IMPRESSIONS`
+  Note: `CTR` and `CPM` from async reports are NOT valid here. Use `COMPLETES` (not `AD_COMPLETES`).
+- `granularity` (string) — `HOUR`, `DAY`, or `LIFETIME` (default: `LIFETIME`)
+- `report_start` (ISO 8601 datetime, optional for LIFETIME)
+- `report_end` (ISO 8601 datetime, optional for LIFETIME)
+- `entity_ids` (array of uuid) — Filter to specific entities (repeated format)
+- `entity_ids_type` (string) — Type of IDs in entity_ids: `CAMPAIGN`, `AD_SET`, `AD`
+- `entity_status_type` (string) — Filter by status
+- `include_parent_entity` (boolean) — Include parent entity info for AD_SET/AD
 - `continuation_token` (string) — For pagination
 - `limit` (integer, 1-50)
+
+**Granularity constraints:**
+- `LIFETIME` / `DAY`: date range must be within 90 days
+- `HOUR`: date range must be within the last 2 weeks
 
 **Response:** 200 — `AggregateReportResponse`
 ```json
 {
-  "continuation_token": "...",
+  "continuation_token": null,
   "report_start": "2025-01-01T00:00:00Z",
   "report_end": "2025-01-31T23:59:59Z",
-  "granularity": "DAY",
+  "granularity": "LIFETIME",
   "rows": [{
-    "entity_type": "CAMPAIGN",
+    "entity_type": "AD_SET",
     "entity_id": "...",
     "entity_name": "...",
     "start_time": "...",
     "end_time": "...",
-    "stats": [{ "field_type": "IMPRESSIONS", "field_value": "12345" }]
+    "stats": [{ "field_type": "IMPRESSIONS", "field_value": 15234.0 }]
   }]
 }
 ```
+
+Note: `field_value` is a **float** (e.g., `15234.0`, `0.0`), not a string. `SPEND` values are in micro-amounts — divide by 1,000,000 for dollar values.
 
 ### GET /ad_accounts/{ad_account_id}/insight_reports
 Get audience insight breakdowns.
 
 **Query Parameters:**
-- `insight_dimension` (string) — GENDER, PLATFORM, LOCATION, ARTIST, GENRE, etc.
-- `report_fields` (array)
+- `insight_dimension` (string) — GENDER, PLATFORM, LOCATION, ARTIST, GENRE
+- `fields` (array) — **Uses `fields`, NOT `report_fields`.** Repeated parameter format.
 - `entity_ids` (array of uuid)
 
 **Response:** 200 — `AudienceInsightResponse`
