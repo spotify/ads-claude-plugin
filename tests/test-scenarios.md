@@ -2,6 +2,8 @@
 
 10 structured test scenarios for validating the Spotify Ads API plugin. Each scenario covers specific API quirks and plugin behaviors.
 
+**Important:** All entity names (campaigns, ad sets, ads) must be prefixed with `[Test reject]` so they are automatically rejected by ad review and never serve live impressions.
+
 ---
 
 ## Scenario 1: Configure OAuth
@@ -53,12 +55,12 @@ curl -s -H "Authorization: Bearer <token>" \
 
 ## Scenario 3: Create Campaign
 
-**Prompt:** "Create a campaign called Q1 Brand Awareness with a reach objective"
+**Prompt:** "Create a campaign called [Test reject] Q1 Brand Awareness with a reach objective"
 
-**Quirks tested:** POST body construction, objective enum
+**Quirks tested:** POST body construction, objective enum, `[Test reject]` prefix for automatic ad review rejection
 
 **Expected behavior:**
-1. Agent extracts: name="Q1 Brand Awareness", objective="REACH"
+1. Agent extracts: name="[Test reject] Q1 Brand Awareness", objective="REACH"
 2. Constructs POST request with JSON body
 3. Shows curl command for confirmation
 
@@ -66,12 +68,13 @@ curl -s -H "Authorization: Bearer <token>" \
 ```bash
 curl -s -X POST -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Q1 Brand Awareness","objective":"REACH"}' \
+  -d '{"name":"[Test reject] Q1 Brand Awareness","objective":"REACH"}' \
   "https://api-partner.spotify.com/ads-sandbox/v3/ad_accounts/<account_id>/campaigns"
 ```
 
 **Success criteria:**
 - Request body contains exactly `name` and `objective`
+- `name` starts with `[Test reject]`
 - Objective is uppercase enum value `REACH`
 - Returns 201 with campaign object including `id`
 
@@ -103,7 +106,7 @@ curl -s -X POST -H "Authorization: Bearer <token>" \
 curl -s -X POST -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "...",
+    "name": "[Test reject] ...",
     "campaign_id": "<campaign_id>",
     "start_time": "2026-03-01T00:00:00Z",
     "budget": {"micro_amount": 75000000, "type": "DAILY"},
@@ -152,7 +155,7 @@ curl -s -X POST -H "Authorization: Bearer <token>" \
 curl -s -X POST -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "...",
+    "name": "[Test reject] ...",
     "ad_set_id": "<ad_set_id>",
     "tagline": "...",
     "advertiser_name": "...",
@@ -180,7 +183,7 @@ curl -s -X POST -H "Authorization: Bearer <token>" \
 
 ## Scenario 6: Full Build-Campaign Flow
 
-**Prompt:** "Build me a complete audio campaign called Summer Promo targeting US listeners aged 25-44 with $100/day budget"
+**Prompt:** "Build me a complete audio campaign called [Test reject] Summer Promo targeting US listeners aged 25-44 with $100/day budget"
 
 **Quirks tested:** End-to-end multi-step (campaign -> ad set -> ad), ID passing, all quirks combined
 
@@ -192,9 +195,9 @@ curl -s -X POST -H "Authorization: Bearer <token>" \
 5. Displays summary table
 
 **Success criteria:**
-- Campaign created with objective (default REACH)
-- Ad set created with all required fields (budget 100000000, geo_targets flat, platforms correct, category present, placements present, bid_strategy as string)
-- Ad created with all required assets (including companion_asset_id for AUDIO)
+- Campaign created with objective (default REACH) and `[Test reject]` prefix in name
+- Ad set created with all required fields (budget 100000000, geo_targets flat, platforms correct, category present, placements present, bid_strategy as string) and `[Test reject]` prefix in name
+- Ad created with all required assets (including companion_asset_id for AUDIO) and `[Test reject]` prefix in name
 - IDs correctly passed from each step to the next
 - Final summary shows all created entities
 
@@ -233,7 +236,7 @@ limit=50"
 
 ## Scenario 8: Pause a Campaign
 
-**Prompt:** "Pause the Q1 Brand Awareness campaign"
+**Prompt:** "Pause the [Test reject] Q1 Brand Awareness campaign"
 
 **Quirks tested:** No DELETE pattern (status change), PATCH not DELETE
 
@@ -362,7 +365,7 @@ curl -s -X POST -H "Authorization: Bearer <token>" \
 
 ## Scenario 12: Pre-flight Audience Estimate
 
-**Prompt:** "Build me a video campaign called Narrow Test targeting US listeners aged 50-54 in Portland with $25/day budget"
+**Prompt:** "Build me a video campaign called [Test reject] Narrow Test targeting US listeners aged 50-54 in Portland with $25/day budget"
 
 **Quirks tested:** Pre-flight audience validation, `POST /estimates/audience` (top-level, not under ad_accounts), narrow targeting warning
 
