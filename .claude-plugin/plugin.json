@@ -5,6 +5,6 @@
   "author": {
     "name": "Alex Murphy"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": ["spotify", "ads", "api", "campaigns", "advertising", "oauth", "reporting"]
 }
