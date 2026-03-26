@@ -21,7 +21,7 @@ claude plugin add spotify-ads-api
 
 1. Clone the repository:
    ```bash
-   git clone git@ghe.spotify.net:alexmurphy/sp-ads-api-plugin.git
+   git clone https://github.com/spotify/ads-claude-plugin.git
    ```
 
 2. Launch Claude Code with the plugin directory:
@@ -139,4 +139,10 @@ Some API behaviors differ between sandbox and production. If a call works in pro
 
 ## License
 
-MIT
+Copyright 2026 Spotify, Inc.
+
+Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+## Security Issues?
+
+Please report sensitive security issues via Spotify's bug-bounty program (https://hackerone.com/spotify) rather than GitHub.
