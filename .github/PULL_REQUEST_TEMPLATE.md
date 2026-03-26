@@ -1,13 +1,11 @@
-## Hi There, I just made a Pull Request!
+## Description
 
-<!-- Please describe what you added, and add a screenshot if possible.
-     That makes it easier to understand the change so we can :shipit: faster. -->
+<!-- Describe what you changed and why. -->
 
-#### :heavy_check_mark: Checklist
+#### Checklist
 <!--- Put an `x` in all the boxes that apply: -->
-- [ ] All tests are passing
-- [ ] Screenshots attached (for UI changes)
-- [ ] Relevant documentation updated
-- [ ] linter/sytle run on changed files
-- [ ] Tests added for new functionality
-- [ ] Regression tests added for bug fixes
+- [ ] Tested against the Spotify Ads API with `claude --plugin-dir`
+- [ ] Existing skills still work as expected
+- [ ] SKILL.md frontmatter is valid (name, description, allowed-tools)
+- [ ] README or CHANGELOG updated (if user-facing change)
+- [ ] Curl commands follow API conventions documented in CLAUDE.md
